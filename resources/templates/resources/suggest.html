@@ -1,0 +1,24 @@
+{% extends "pages/base_site.html" %}
+{% load static kod_extras %}
+{% block title %}Sugjero një burim | KOD{% endblock %}
+{% block content %}
+<section class="page-hero" style="{% hero_style None 'resources.jpg' %}">
+    <div class="container">
+        <p class="hero-label">KONTRIBUO</p>
+        <h1 class="page-title">Sugjero një burim</h1>
+        <p class="page-lead">Ekipi e shqyrton çdo sugjerim përpara se të publikohet.</p>
+    </div>
+</section>
+<section class="content-section">
+    <div class="container content-narrow">
+        <form method="post" class="site-form">
+            {% csrf_token %}
+            {% include "_form_fields.html" %}
+            <div class="mt-4 d-flex gap-2">
+                <button type="submit" class="btn btn-outline-light square-btn">Dërgo</button>
+                <a class="btn btn-outline-secondary square-btn" href="{% url 'resources:list' %}">Anulo</a>
+            </div>
+        </form>
+    </div>
+</section>
+{% endblock %}

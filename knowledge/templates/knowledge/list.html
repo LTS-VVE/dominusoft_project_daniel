@@ -1,0 +1,42 @@
+{% extends "pages/base_site.html" %}
+{% load static kod_extras %}
+{% block title %}Baza e njohurive | KOD{% endblock %}
+{% block description %}Udhëzues dhe artikuj të hapur nga komuniteti KOD.{% endblock %}
+{% block content %}
+<section class="page-hero" style="{% hero_style None 'knowledge.jpg' %}">
+    <div class="container">
+        <p class="hero-label">BAZA E NJOHURIVE</p>
+        <h1 class="page-title">Njohuri</h1>
+        <p class="page-lead">Udhëzues dhe artikuj të hapur, të shkruar nga komuniteti dhe për komunitetin.</p>
+        {% if user.is_staff %}<a class="btn btn-outline-light square-btn mt-4" href="{% url 'knowledge:create' %}">Artikull i ri</a>{% endif %}
+    </div>
+</section>
+<section class="content-section">
+    <div class="container">
+        {% if categories %}
+        <div class="chips mb-4">
+            <a class="chip{% if not active %} active{% endif %}" href="{% url 'knowledge:list' %}">Të gjitha</a>
+            {% for c in categories %}<a class="chip{% if active == c.slug %} active{% endif %}" href="?kategori={{ c.slug }}">{{ c.name }}</a>{% endfor %}
+        </div>
+        {% endif %}
+        {% if page.object_list %}
+        <div class="cards-grid">
+            {% for a in page.object_list %}
+            <article class="card">
+                {% include "pages/_card_image.html" with image=a.image alt=a.title %}
+                <div class="card-body">
+                    <p class="card-kicker">{{ a.category.name|upper }}{% if a.status != 'published' %} <span class="status-label">DRAFT</span>{% endif %}</p>
+                    <h2 class="card-title h5"><a class="plain-link" href="{{ a.get_absolute_url }}">{{ a.title }}</a></h2>
+                    <p class="card-text">{{ a.summary }}</p>
+                    <p class="meta-line mt-auto mb-0">{{ a.published_at|sq_date }}{% if a.published_at %} &middot; {% endif %}{{ a.reading_minutes }} min lexim</p>
+                </div>
+            </article>
+            {% endfor %}
+        </div>
+        {% include "pages/_pagination.html" %}
+        {% else %}
+        <div class="status-summary"><span class="status-indicator"></span><div><h2>Ende pa artikuj</h2><p class="muted-copy mb-0">Artikujt e parë do të shfaqen këtu së shpejti.</p></div></div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

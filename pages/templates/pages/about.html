@@ -1,0 +1,71 @@
+{% extends "pages/base_site.html" %}
+{% load static kod_extras %}
+
+{% block title %}Rreth nesh | KOD{% endblock %}
+{% block description %}Njihu me KOD, çfarë na shtyn përpara dhe çfarë duam të ndërtojmë.{% endblock %}
+
+{% block content %}
+<section class="page-hero" style="{% hero_style None 'about.jpg' %}">
+    <div class="container">
+        <p class="hero-label">KUSH JEMI</p>
+        <h1 class="page-title">Rreth KOD</h1>
+        <p class="page-lead">Teknologjia bëhet më e vlefshme kur njohuritë ndahen dhe mundësitë janë të hapura për të gjithë.</p>
+    </div>
+</section>
+
+<section class="content-section">
+    <div class="container content-narrow">
+
+        <div class="content-block">
+            <p class="card-kicker">MISIONI YNË</p>
+            <h2>Njohuri pa barriera.</h2>
+            <p>
+                KOD (Komuniteti Open Digjital) është një komunitet i ndërtuar
+                rreth teknologjisë, shkëmbimit të njohurive dhe ideve të hapura.
+                Ne besojmë se qasja në informacion dhe mundësia për të mësuar
+                nuk duhet të kufizohen nga barriera të panevojshme. KOD synon
+                të krijojë një hapësirë ku njerëzit mund të mësojnë, të ndajnë
+                përvojat e tyre dhe të zhvillojnë ide së bashku.
+            </p>
+        </div>
+
+        <div class="content-block">
+            <p class="card-kicker">PARIMET TONA</p>
+
+            <div class="values-grid">
+                <article class="value-item">
+                    <h3>Qasje e hapur</h3>
+                    <p>Besojmë se informacioni dhe njohuritë duhet të jenë të lira dhe të arritshme, pa pengesa të panevojshme.</p>
+                </article>
+
+                <article class="value-item">
+                    <h3>Privatësi</h3>
+                    <p>Privatësia nuk është luks. Respektojmë të dhënat personale, identitetin dhe të drejtën e secilit për të zgjedhur.</p>
+                </article>
+
+                <article class="value-item">
+                    <h3>Bashkëpunim</h3>
+                    <p>Idetë rriten kur ndahen. Nxisim shkëmbimin e njohurive, ndihmën reciproke dhe krijimin së bashku.</p>
+                </article>
+
+                <article class="value-item">
+                    <h3>Transparencë</h3>
+                    <p>Duam që mënyra se si funksionon KOD, çfarë bëjmë dhe pse e bëjmë të jetë sa më e qartë.</p>
+                </article>
+            </div>
+        </div>
+
+        <div class="content-block">
+            <p class="card-kicker">KONTRIBUO</p>
+            <h2>Ke diçka për të ndarë?</h2>
+            <p>
+                Nuk ka rëndësi nëse është një ide, një projekt, një udhëzues
+                apo thjesht dëshira për të mësuar me të tjerët.
+                Çdo kontribut mund të jetë fillimi i diçkaje më të madhe.
+            </p>
+            <a class="btn btn-outline-light square-btn" href="{% url 'pages:contact' %}">Kontakto KOD</a>
+        </div>
+
+    </div>
+</section>
+{% endblock %}

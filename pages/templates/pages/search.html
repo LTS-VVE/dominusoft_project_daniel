@@ -1,0 +1,81 @@
+{% extends "pages/base_site.html" %}
+{% load static kod_extras %}
+{% load kod_extras %}
+{% block title %}Kërko | KOD{% endblock %}
+{% block description %}Kërko në përmbajtjen e faqes KOD.{% endblock %}
+{% block content %}
+<section class="page-hero" style="{% hero_style None 'search.jpg' %}">
+    <div class="container">
+        <p class="hero-label">Search</p>
+        <h1 class="page-title">Kërko në KOD</h1>
+        <p class="page-lead">Gjej artikuj, ngjarje, burime, anëtarë{% if user.is_authenticated %}, tiketa dhe komente{% endif %}.</p>
+    </div>
+</section>
+<section class="content-section">
+    <div class="container content-narrow">
+        <form class="hero-search mb-4" action="{% url 'pages:search' %}" method="get" role="search">
+            <div class="input-group">
+                <input class="form-control py-3" type="search" name="q" value="{{ query }}" placeholder="Çfarë po kërkon?" aria-label="Termi i kërkimit" required>
+                <button class="btn btn-outline-light px-4" type="submit">Kërko</button>
+            </div>
+        </form>
+
+        {% if not query %}
+        <p class="muted-copy" role="status">Shkruaj një term për të kërkuar në KOD.</p>
+        {% elif total == 0 %}
+        <p class="muted-copy" role="status">Nuk u gjetën rezultate për &ldquo;{{ query }}&rdquo;.</p>
+        {% else %}
+        <p class="muted-copy" role="status">{{ total }} rezultat(e) për &ldquo;{{ query }}&rdquo;.</p>
+
+        {% if articles %}
+        <p class="card-kicker mt-4">NJOHURI</p>
+        <div class="search-results">{% for a in articles %}
+            <article class="search-result"><h2><a href="{{ a.get_absolute_url }}">{{ a.title }}</a></h2><p>{{ a.summary }}</p><p class="meta-line">{{ a.category.name }}</p></article>
+        {% endfor %}</div>
+        {% endif %}
+
+        {% if events %}
+        <p class="card-kicker mt-4">NGJARJE</p>
+        <div class="search-results">{% for e in events %}
+            <article class="search-result"><h2><a href="{{ e.get_absolute_url }}">{{ e.title }}</a></h2><p>{{ e.starts_at|sq_date }}{% if e.location %} &middot; {{ e.location }}{% endif %}</p></article>
+        {% endfor %}</div>
+        {% endif %}
+
+        {% if resources %}
+        <p class="card-kicker mt-4">BURIME</p>
+        <div class="search-results">{% for r in resources %}
+            <article class="search-result"><h2><a href="{{ r.url }}" target="_blank" rel="noopener noreferrer nofollow">{{ r.title }}</a></h2><p>{{ r.description }}</p><p class="meta-line">{{ r.category.name }} &middot; {{ r.get_kind_display }}</p></article>
+        {% endfor %}</div>
+        {% endif %}
+
+        {% if members %}
+        <p class="card-kicker mt-4">ANËTARË</p>
+        <div class="search-results">{% for m in members %}
+            <article class="search-result"><h2><a href="{% url 'members:detail' m.user.username %}">{{ m.name }}</a></h2>{% if m.headline %}<p>{{ m.headline }}</p>{% endif %}</article>
+        {% endfor %}</div>
+        {% endif %}
+
+        {% if pages %}
+        <p class="card-kicker mt-4">FAQET</p>
+        <div class="search-results">{% for p in pages %}
+            <article class="search-result"><h2><a href="{{ p.url }}">{{ p.title }}</a></h2><p>{{ p.text }}</p></article>
+        {% endfor %}</div>
+        {% endif %}
+
+        {% if tickets %}
+        <p class="card-kicker mt-4">TIKETAT</p>
+        <div class="search-results">{% for t in tickets %}
+            <article class="search-result"><h2><a href="{% url 'tickets:ticket_detail' t.pk %}">{{ t.title }}</a></h2><p>{{ t.description|truncatechars:140 }}</p><p><span class="status-label status-{{ t.status }}">{{ t.get_status_display|upper }}</span></p></article>
+        {% endfor %}</div>
+        {% endif %}
+
+        {% if comments %}
+        <p class="card-kicker mt-4">KOMENTET</p>
+        <div class="search-results">{% for c in comments %}
+            <article class="search-result"><h2><a href="{% url 'tickets:ticket_detail' c.ticket.pk %}">{{ c.ticket.title }}</a></h2><p>{{ c.author.username }}: {{ c.body|truncatechars:140 }}</p></article>
+        {% endfor %}</div>
+        {% endif %}
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

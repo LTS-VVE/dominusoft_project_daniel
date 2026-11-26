@@ -1,0 +1,30 @@
+{% extends "pages/base_site.html" %}
+{% load static kod_extras %}
+{% block title %}{{ profile.name }} | KOD{% endblock %}
+{% block content %}
+<section class="page-hero" style="{% hero_style None 'members.jpg' %}">
+    <div class="container">
+        <div class="mb-3">{% avatar member 112 %}</div>
+        <p class="hero-label">{% if profile.headline %}{{ profile.headline|upper }}{% else %}ANËTAR I KOD{% endif %}</p>
+        <h1 class="page-title title-fit">{{ profile.name }}</h1>
+        <p class="meta-line mt-3">@{{ member.username }}{% if profile.location %} &middot; {{ profile.location }}{% endif %} &middot; anëtar që nga {{ member.date_joined|sq_date }}</p>
+    </div>
+</section>
+<section class="content-section">
+    <div class="container content-narrow">
+        {% if not profile.is_public %}<div class="alert alert-warning">Profili yt është privat. E sheh vetëm ti dhe stafi.{% if is_owner %} <a class="text-link" href="{% url 'profile_edit' %}">Ndrysho</a>{% endif %}</div>{% endif %}
+        {% if profile.bio %}<div class="content-block"><p class="card-kicker">RRETH</p><div class="prose">{{ profile.bio|linebreaks }}</div></div>{% endif %}
+        {% if profile.skill_list %}<div class="content-block"><p class="card-kicker">AFTËSI</p><div class="tag-list">{% for s in profile.skill_list %}<span class="tag">{{ s }}</span>{% endfor %}</div></div>{% endif %}
+        {% if profile.website %}<div class="content-block"><p class="card-kicker">FAQJA</p><p><a class="text-link" href="{{ profile.website }}" target="_blank" rel="noopener noreferrer nofollow ugc">{{ profile.website }}</a></p></div>{% endif %}
+        {% if articles %}
+        <div class="content-block">
+            <p class="card-kicker">ARTIKUJ</p>
+            <div class="status-list">
+                {% for a in articles %}<article class="status-row"><div><h3><a class="plain-link" href="{{ a.get_absolute_url }}">{{ a.title }}</a></h3><p>{{ a.summary }}</p></div></article>{% endfor %}
+            </div>
+        </div>
+        {% endif %}
+        {% if can_edit %}<a class="btn btn-outline-light square-btn mt-4" href="{% url 'members:edit' member.username %}">Ndrysho profilin</a>{% endif %}
+    </div>
+</section>
+{% endblock %}

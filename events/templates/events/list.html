@@ -1,0 +1,39 @@
+{% extends "pages/base_site.html" %}
+{% load static kod_extras %}
+{% block title %}Ngjarje | KOD{% endblock %}
+{% block description %}Aktivitetet dhe takimet e ardhshme të KOD.{% endblock %}
+{% block content %}
+<section class="page-hero" style="{% hero_style None 'events.jpg' %}">
+    <div class="container">
+        <p class="hero-label">KALENDARI</p>
+        <h1 class="page-title">Ngjarje</h1>
+        <p class="page-lead">Shih aktivitetet e radhës dhe bëhu pjesë.</p>
+        {% if user.is_staff %}<a class="btn btn-outline-light square-btn mt-4" href="{% url 'events:create' %}">Ngjarje e re</a>{% endif %}
+    </div>
+</section>
+<section class="content-section">
+    <div class="container content-narrow">
+        <div class="chips mb-4">
+            <a class="chip{% if not show_past %} active{% endif %}" href="{% url 'events:list' %}">Të ardhshme</a>
+            <a class="chip{% if show_past %} active{% endif %}" href="?te=kaluara">Të kaluara</a>
+        </div>
+        {% if events %}
+        <div class="status-list">
+            {% for e in events %}
+            <article class="status-row event-row">
+                <div class="event-date" aria-hidden="true"><strong>{{ e.starts_at|date:"j" }}</strong><span>{{ e.starts_at|sq_month_short }}</span></div>
+                {% include "pages/_thumb.html" with image=e.image %}
+                <div class="event-main">
+                    <h3><a class="plain-link" href="{{ e.get_absolute_url }}">{{ e.title }}</a>{% if not e.is_published %} <span class="status-label">DRAFT</span>{% endif %}</h3>
+                    <p>{{ e.starts_at|sq_weekday }}, {{ e.starts_at|sq_date }} &middot; {{ e.starts_at|date:"H:i" }}{% if e.location %} &middot; {{ e.location }}{% elif e.online_url %} &middot; Online{% endif %}</p>
+                </div>
+                <span class="status-label">{{ e.going }}{% if e.capacity %} / {{ e.capacity }}{% endif %} PJESËMARRËS</span>
+            </article>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="status-summary"><span class="status-indicator"></span><div><h2>{% if show_past %}Nuk ka ngjarje të kaluara{% else %}Nuk ka ngjarje të planifikuara{% endif %}</h2><p class="muted-copy mb-0">{% if show_past %}Ngjarjet e kaluara do të shfaqen këtu.{% else %}Kur të organizojmë diçka të re, do ta gjeni këtu.{% endif %}</p></div></div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

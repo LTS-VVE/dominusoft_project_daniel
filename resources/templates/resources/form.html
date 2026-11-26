@@ -1,0 +1,23 @@
+{% extends "pages/base_site.html" %}
+{% load static kod_extras %}
+{% block title %}{% if resource %}Ndrysho burimin{% else %}Burim i ri{% endif %} | KOD{% endblock %}
+{% block content %}
+<section class="page-hero" style="{% hero_style resource.image 'resources.jpg' %}">
+    <div class="container">
+        <p class="hero-label">KATALOGU</p>
+        <h1 class="page-title">{% if resource %}Ndrysho burimin{% else %}Burim i ri{% endif %}</h1>
+    </div>
+</section>
+<section class="content-section">
+    <div class="container content-narrow">
+        <form method="post" enctype="multipart/form-data" class="site-form">
+            {% csrf_token %}
+            {% include "_form_fields.html" %}
+            <div class="mt-4 d-flex gap-2">
+                <button type="submit" class="btn btn-outline-light square-btn">Ruaj</button>
+                <a class="btn btn-outline-secondary square-btn" href="{% url 'resources:list' %}">Anulo</a>
+            </div>
+        </form>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,25 @@
+{% extends "pages/base_site.html" %}
+{% load static kod_extras %}
+{% block title %}Profili | KOD{% endblock %}
+{% block content %}
+<section class="page-hero" style="{% hero_style None 'auth.jpg' %}">
+    <div class="container">
+        <p class="hero-label">{% if member and member != user %}PROFILI I ANËTARIT{% else %}LLOGARIA JOTE{% endif %}</p>
+        <h1 class="page-title">{% if member and member != user %}{{ profile.name }}{% else %}Profili im{% endif %}</h1>
+        <div class="mt-3">{% avatar profile.user 96 %}</div>
+        <p class="page-lead">Profili është privat si parazgjedhje. Zgjidh vetë nëse do të shfaqet te anëtarët.</p>
+    </div>
+</section>
+<section class="content-section">
+    <div class="container content-narrow">
+        <form method="post" enctype="multipart/form-data" class="site-form">
+            {% csrf_token %}
+            {% include "_form_fields.html" %}
+            <div class="mt-4 d-flex gap-2">
+                <button type="submit" class="btn btn-outline-light square-btn">Ruaj</button>
+                <a class="btn btn-outline-secondary square-btn" href="{% url 'members:detail' profile.user.username %}">Shiko profilin</a>
+            </div>
+        </form>
+    </div>
+</section>
+{% endblock %}

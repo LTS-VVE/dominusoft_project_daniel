@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% load static kod_extras %}
+{% block title %}Sign up{% endblock %}
+{% block content %}
+<section class="page-hero" style="{% hero_style None 'auth.jpg' %}">
+    <div class="container">
+        <p class="hero-label">JOIN KOD</p>
+        <h1 class="page-title">Sign up</h1>
+    </div>
+</section>
+<section class="content-section">
+    <div class="container content-narrow auth-narrow">
+        <form method="post" class="site-form">
+            {% csrf_token %}
+            {% include "_form_fields.html" %}
+            <button type="submit" class="btn btn-outline-light square-btn mt-4 align-self-start">Create account</button>
+        </form>
+        <p class="muted-copy mt-4">Already have an account? <a class="text-link" href="{% url 'login' %}">Log in</a></p>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,46 @@
+{% extends "pages/base_site.html" %}
+{% load static kod_extras %}
+{% block title %}{{ event.title }} | KOD{% endblock %}
+{% block content %}
+<section class="page-hero hero-tall" style="{% hero_style event.image 'events.jpg' %}">
+    <div class="container">
+        <p class="hero-label">NGJARJE</p>
+        <h1 class="page-title title-fit">{{ event.title }}</h1>
+        <p class="page-lead">{{ event.starts_at|sq_weekday }}, {{ event.starts_at|sq_date }} &middot; {{ event.starts_at|date:"H:i" }}{% if event.ends_at %} - {{ event.ends_at|date:"H:i" }}{% endif %}</p>
+        {% if user.is_staff %}<a class="btn btn-outline-light btn-sm square-btn mt-3" href="{% url 'events:edit' event.slug %}">Ndrysho</a>{% endif %}
+    </div>
+</section>
+<section class="content-section">
+    <div class="container content-narrow">
+        {% if not event.is_published %}<div class="alert alert-warning">Kjo ngjarje është draft dhe e shohin vetëm stafi.</div>{% endif %}
+        <div class="values-grid mb-4">
+            <article class="value-item"><p class="note-label">VENDI</p><h3>{% if event.location %}{{ event.location }}{% else %}Online{% endif %}</h3></article>
+            <article class="value-item"><p class="note-label">PJESËMARRËS</p><h3>{{ going_count }}{% if event.capacity %} / {{ event.capacity }}{% endif %}</h3></article>
+            {% if event.spots_left is not None and not event.is_past %}<article class="value-item"><p class="note-label">VENDE TË LIRA</p><h3>{{ event.spots_left }}</h3></article>{% endif %}
+        </div>
+
+        <div class="prose">{{ event.description|markdown_safe }}</div>
+
+        <div class="content-block">
+            {% if event.is_past %}
+            <p class="muted-copy mb-0">Kjo ngjarje ka përfunduar.</p>
+            {% elif user.is_authenticated %}
+            <form method="post" action="{% url 'events:rsvp' event.slug %}">
+                {% csrf_token %}
+                {% if going %}
+                <p class="mb-3">Je regjistruar për këtë ngjarje.</p>
+                {% if event.online_url %}<p class="mb-3"><a class="text-link" href="{{ event.online_url }}" target="_blank" rel="noopener noreferrer">Lidhja e ngjarjes online</a></p>{% endif %}
+                <button type="submit" class="btn btn-outline-secondary square-btn">Anulo pjesëmarrjen</button>
+                {% elif event.is_full %}
+                <p class="muted-copy mb-0">Ngjarja është plot.</p>
+                {% else %}
+                <button type="submit" class="btn btn-outline-light square-btn">Regjistrohu</button>
+                {% endif %}
+            </form>
+            {% else %}
+            <p class="muted-copy mb-0"><a class="text-link" href="{% url 'login' %}?next={{ request.path }}">Hyr</a> ose <a class="text-link" href="{% url 'signup' %}">regjistrohu</a> për të marrë pjesë.</p>
+            {% endif %}
+        </div>
+    </div>
+</section>
+{% endblock %}

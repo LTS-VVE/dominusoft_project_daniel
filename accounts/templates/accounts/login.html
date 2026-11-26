@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% load static kod_extras %}
+{% block title %}Log in{% endblock %}
+{% block content %}
+<section class="page-hero" style="{% hero_style None 'auth.jpg' %}">
+    <div class="container">
+        <p class="hero-label">Welcome back!</p>
+        <h1 class="page-title">Log in</h1>
+    </div>
+</section>
+<section class="content-section">
+    <div class="container content-narrow auth-narrow">
+        <form method="post" class="site-form">
+            {% csrf_token %}
+            {% include "_form_fields.html" %}
+            {% if next %}<input type="hidden" name="next" value="{{ next }}">{% endif %}
+            <button type="submit" class="btn btn-outline-light square-btn mt-4 align-self-start">Log in</button>
+        </form>
+        <p class="muted-copy mt-4">No account yet? <a class="text-link" href="{% url 'signup' %}">Sign up</a></p>
+    </div>
+</section>
+{% endblock %}

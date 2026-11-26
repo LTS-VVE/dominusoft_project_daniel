@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% load static kod_extras %}
+{% block title %}{{ ticket.title }}{% endblock %}
+{% block content %}
+<section class="page-hero" style="{% hero_style None 'tickets.jpg' %}">
+    <div class="container">
+        <p class="hero-label">TICKET #{{ ticket.pk }}</p>
+        <h1 class="page-title title-fit">{{ ticket.title }}</h1>
+        <p class="page-lead">Opened by {{ ticket.requester.username }} on {{ ticket.created_at|date:"d M Y, H:i" }}</p>
+    </div>
+</section>
+<section class="content-section">
+    <div class="container content-narrow">
+        <div class="content-block">
+            <div class="d-flex justify-content-between align-items-start gap-3 flex-wrap">
+                <p class="card-kicker mb-0">DESCRIPTION</p>
+                <a class="btn btn-outline-light btn-sm square-btn" href="{% url 'tickets:ticket_update' ticket.pk %}">Edit</a>
+            </div>
+            <div class="ticket-body">{{ ticket.description|linebreaks }}</div>
+            <div class="values-grid">
+                <article class="value-item"><p class="note-label">STATUS</p><h3><span class="status-label status-{{ ticket.status }}">{{ ticket.get_status_display|upper }}</span></h3></article>
+                <article class="value-item"><p class="note-label">PRIORITY</p><h3>{{ ticket.get_priority_display }}</h3></article>
+                <article class="value-item"><p class="note-label">CATEGORY</p><h3>{{ ticket.category }}</h3></article>
+                <article class="value-item"><p class="note-label">ASSIGNEE</p><h3>{{ ticket.assignee.username|default:"Unassigned" }}</h3></article>
+                <article class="value-item"><p class="note-label">LAST UPDATE</p><h3>{{ ticket.updated_at|date:"d M Y, H:i" }}</h3></article>
+            </div>
+        </div>
+
+        <div class="content-block">
+            <p class="card-kicker">COMMENTS ({{ ticket.comments.count }})</p>
+            {% for c in ticket.comments.all %}
+            <article class="comment">
+                <header><strong>{% avatar c.author 28 %} {{ c.author.username }}</strong><span>{{ c.created_at|date:"d M Y, H:i" }}</span></header>
+                {{ c.body|linebreaks }}
+            </article>
+            {% empty %}
+            <p class="muted-copy">No comments yet.</p>
+            {% endfor %}
+
+            <form method="post" action="{% url 'tickets:comment_create' ticket.pk %}" class="site-form mt-4">
+                {% csrf_token %}
+                {% include "_form_fields.html" with form=comment_form %}
+                <button type="submit" class="btn btn-outline-light square-btn mt-3 align-self-start">Add comment</button>
+            </form>
+        </div>
+    </div>
+</section>
+{% endblock %}

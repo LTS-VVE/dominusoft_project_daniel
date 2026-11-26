@@ -1,0 +1,34 @@
+{% extends "pages/base_site.html" %}
+{% load static kod_extras %}
+{% block title %}{{ article.title }} | KOD{% endblock %}
+{% block description %}{{ article.summary }}{% endblock %}
+{% block content %}
+<section class="page-hero hero-tall" style="{% hero_style article.image 'knowledge.jpg' %}">
+    <div class="container">
+        <p class="hero-label"><a class="plain-link" href="{% url 'knowledge:list' %}?kategori={{ article.category.slug }}">{{ article.category.name|upper }}</a></p>
+        <h1 class="page-title title-fit">{{ article.title }}</h1>
+        <p class="page-lead">{{ article.summary }}</p>
+        <p class="meta-line mt-3 d-flex align-items-center gap-2 flex-wrap">
+            {% if article.author %}{% avatar article.author 28 %}<span>{% if article.author.profile.is_public %}<a class="plain-link" href="{% url 'members:detail' article.author.username %}">{{ article.author.username }}</a>{% else %}{{ article.author.username }}{% endif %}</span><span>&middot;</span>{% endif %}
+            <span>{{ article.published_at|sq_date }}{% if article.published_at %} &middot; {% endif %}{{ article.reading_minutes }} min lexim</span>
+        </p>
+        {% if user.is_staff %}<a class="btn btn-outline-light btn-sm square-btn mt-3" href="{% url 'knowledge:edit' article.slug %}">Ndrysho</a>{% endif %}
+    </div>
+</section>
+<section class="content-section">
+    <div class="container content-narrow">
+        {% if article.status != 'published' %}<div class="alert alert-warning">Ky artikull është draft dhe e shohin vetëm stafi.</div>{% endif %}
+        <div class="prose">{{ article.body|markdown_safe }}</div>
+        {% if related %}
+        <div class="content-block">
+            <p class="card-kicker">TË NGJASHME</p>
+            <div class="status-list">
+                {% for r in related %}
+                <article class="status-row"><div class="row-media">{% include "pages/_thumb.html" with image=r.image %}<div><h3><a class="plain-link" href="{{ r.get_absolute_url }}">{{ r.title }}</a></h3><p>{{ r.summary }}</p></div></div></article>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

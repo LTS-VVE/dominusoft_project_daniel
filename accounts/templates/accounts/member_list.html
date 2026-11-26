@@ -1,0 +1,36 @@
+{% extends "pages/base_site.html" %}
+{% load static kod_extras %}
+{% block title %}Anëtarët | KOD{% endblock %}
+{% block description %}Njihu me anëtarët e komunitetit KOD.{% endblock %}
+{% block content %}
+<section class="page-hero" style="{% hero_style None 'members.jpg' %}">
+    <div class="container">
+        <p class="hero-label">KOMUNITETI</p>
+        <h1 class="page-title">Anëtarët</h1>
+        <p class="page-lead">Njerëzit që mësojnë dhe ndërtojnë së bashku. Shfaqen vetëm profilet që anëtarët i kanë bërë publike.</p>
+        {% if user.is_authenticated %}<a class="btn btn-outline-light square-btn mt-4" href="{% url 'profile_edit' %}">Profili im</a>{% else %}<a class="btn btn-outline-light square-btn mt-4" href="{% url 'signup' %}">Bashkohu</a>{% endif %}
+    </div>
+</section>
+<section class="content-section">
+    <div class="container">
+        {% if page.object_list %}
+        <div class="cards-grid">
+            {% for p in page.object_list %}
+            <article class="card">
+                <div class="card-body">
+                    <div class="mb-3">{% avatar p.user 64 %}</div>
+                    <p class="card-kicker">{% if p.headline %}{{ p.headline|upper }}{% else %}ANËTAR{% endif %}</p>
+                    <h2 class="card-title h5"><a class="plain-link" href="{% url 'members:detail' p.user.username %}">{{ p.name }}</a></h2>
+                    {% if p.bio %}<p class="card-text">{{ p.bio|truncatechars:120 }}</p>{% endif %}
+                    {% if p.skill_list %}<div class="tag-list mt-auto">{% for s in p.skill_list|slice:":4" %}<span class="tag">{{ s }}</span>{% endfor %}</div>{% endif %}
+                </div>
+            </article>
+            {% endfor %}
+        </div>
+        {% include "pages/_pagination.html" %}
+        {% else %}
+        <div class="status-summary"><span class="status-indicator"></span><div><h2>Ende asnjë profil publik</h2><p class="muted-copy mb-0">Bëhu i pari: hap profilin tënd dhe zgjidh ta shfaqësh publikisht.</p></div></div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

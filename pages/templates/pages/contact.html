@@ -1,0 +1,38 @@
+{% extends "pages/base_site.html" %}
+{% load static kod_extras %}
+{% block title %}Kontakt | KOD{% endblock %}
+{% block description %}Kontakto Komunitetin Open Digjital.{% endblock %}
+{% block content %}
+<section class="page-hero" style="{% hero_style None 'contact.jpg' %}">
+    <div class="container">
+        <p class="hero-label">KONTAKT</p>
+        <h1 class="page-title">Na kontakto</h1>
+        <p class="page-lead">Ke një pyetje, ide apo propozim? Na shkruaj.</p>
+    </div>
+</section>
+<section class="content-section">
+    <div class="container contact-layout">
+        <div class="content-block">
+            <p class="card-kicker">NA SHKRUJ</p>
+            <h2>Jemi këtu.</h2>
+            <p class="muted-copy">Na shkruaj për çdo pyetje, sugjerim apo bashkëpunim. Nëse ke nevojë për ndihmë teknike, mund të hapësh një <a class="text-link" href="{% url 'tickets:ticket_create' %}">tiket</a>.</p>
+        </div>
+        <form id="contactForm" class="site-form" data-service="{{ EMAILJS_SERVICE_ID }}" data-template="{{ EMAILJS_TEMPLATE_ID }}" data-key="{{ EMAILJS_PUBLIC_KEY }}">
+            <label for="name" class="form-label">Emri</label>
+            <input class="form-control" id="name" name="name" type="text" autocomplete="name" required>
+            <label for="email" class="form-label">Adresa e email-it</label>
+            <input class="form-control" id="email" name="email" type="email" autocomplete="email" required>
+            <label for="subject" class="form-label">Subjekti</label>
+            <input class="form-control" id="subject" name="subject" type="text" required>
+            <label for="message" class="form-label">Mesazhi</label>
+            <textarea class="form-control" id="message" name="message" rows="6" required></textarea>
+            <button class="btn btn-outline-light square-btn mt-3 align-self-start" type="submit">Dërgo</button>
+            <p class="form-feedback" id="formFeedback" role="status" aria-live="polite"></p>
+        </form>
+    </div>
+</section>
+{% endblock %}
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script src="{% static 'pages/contact.js' %}" defer></script>
+{% endblock %}
