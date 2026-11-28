@@ -59,9 +59,10 @@ Example configuration:
   "ordering": "-created\_at",
   "pagination": 25
 }
+```
 
 ## Setup
- 
+
 ```bash
 git clone <REPOSITORY_URL>
 cd dominusoft_project_daniel
