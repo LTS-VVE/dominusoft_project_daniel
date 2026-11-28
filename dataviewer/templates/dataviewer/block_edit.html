@@ -1,0 +1,40 @@
+{% extends "dataviewer/base.html" %}
+{% block dv_title %}Edit {{ data_block.name }}{% endblock %}
+{% block dv_content %}
+<div class="section-heading">
+  <p class="card-kicker">{{ source.key }}</p>
+  <h1 class="section-title">Configure &ldquo;{{ data_block.name }}&rdquo;</h1>
+</div>
+<form method="post" class="site-form col-lg-8">{% csrf_token %}
+  {% if form.non_field_errors %}<div class="alert alert-danger">{{ form.non_field_errors|join:" " }}</div>{% endif %}
+
+  <label class="form-label">Name</label>{{ form.name }}
+  {% if form.name.errors %}<div class="field-error">{{ form.name.errors|join:" " }}</div>{% endif %}
+
+  <span class="note-label mt-4">Columns</span>
+  <div class="chips">
+    {% for cb in form.columns %}<div class="form-check">{{ cb.tag }}<label class="form-check-label font-monospace" for="{{ cb.id_for_label }}">{{ cb.choice_label }}</label></div>{% endfor %}
+  </div>
+  {% if form.columns.errors %}<div class="field-error">{{ form.columns.errors|join:" " }}</div>{% endif %}
+
+  <div class="row g-3 mt-2">
+    <div class="col-md-4"><label class="form-label">Display</label>{{ form.display }}</div>
+    <div class="col-md-4"><label class="form-label">Group by</label>{{ form.group_by }}<div class="field-help">{{ form.group_by.help_text }}</div></div>
+    <div class="col-md-4"><label class="form-label">Rows per page</label>{{ form.pagination }}</div>
+  </div>
+
+  <div class="row g-3 mt-2 align-items-end">
+    <div class="col-md-6"><label class="form-label">Order by</label>{{ form.ordering }}</div>
+    <div class="col-md-6"><div class="form-check">{{ form.descending }}<label class="form-check-label" for="{{ form.descending.id_for_label }}">Descending</label></div></div>
+  </div>
+
+  <label class="form-label">Filters</label>{{ form.filters }}
+  <div class="field-help">{{ form.filters.help_text }}</div>
+  {% if form.filters.errors %}<div class="field-error">{{ form.filters.errors|join:" " }}</div>{% endif %}
+
+  <div class="mt-4 d-flex align-items-center gap-3">
+    <button class="btn btn-primary">Save</button>
+    <a class="text-link" href="{% url 'dataviewer:block_detail' data_block.pk %}">Cancel</a>
+  </div>
+</form>
+{% endblock %}

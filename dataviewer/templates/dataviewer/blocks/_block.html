@@ -1,0 +1,4 @@
+{% if cfg.display == "board" %}{% include "dataviewer/blocks/_board.html" %}
+{% elif cfg.display == "chart" %}{% include "dataviewer/blocks/_chart.html" %}
+{% elif cfg.display == "cards" %}{% include "dataviewer/blocks/_cards.html" %}
+{% else %}{% include "dataviewer/blocks/_table.html" %}{% endif %}

@@ -1,0 +1,57 @@
+{% extends "dataviewer/base.html" %}
+{% block dv_title %}{{ info.label }}{% endblock %}
+{% block dv_content %}
+<div class="dv-head">
+  <div class="me-auto">
+    <p class="card-kicker mb-1">{{ info.source }} &middot; table {{ info.db_table }}</p>
+    <h1 class="section-title mb-0">{{ info.label }}</h1>
+  </div>
+  <a class="btn btn-sm btn-primary" href="{% url 'dataviewer:records' info.source %}">Browse records</a>
+</div>
+
+<div class="content-block">
+  <h2>Fields</h2>
+  <div class="table-responsive mt-3">
+  <table class="table table-sm align-middle">
+    <thead><tr><th>Name</th><th>Type</th><th>Null</th><th>Unique</th><th>Relation</th><th>Choices</th></tr></thead>
+    <tbody>
+    {% for f in info.fields %}
+      <tr>
+        <td class="font-monospace">{{ f.name }}{% if f.primary_key %} <span class="tag">PK</span>{% endif %}</td>
+        <td>{{ f.type }}{% if f.max_length %} ({{ f.max_length }}){% endif %}</td>
+        <td>{{ f.null|yesno:"yes,no" }}</td>
+        <td>{{ f.unique|yesno:"yes,no" }}</td>
+        <td>{% if f.relation %}{{ f.relation.kind }} &rarr;
+          {% if f.relation.browsable %}<a class="text-link" href="{% url 'dataviewer:model_detail' f.relation.to %}">{{ f.relation.to }}</a>{% else %}{{ f.relation.to }}{% endif %}
+        {% endif %}</td>
+        <td><div class="tag-list">{% for value, label in f.choices %}<span class="tag">{{ label }}</span>{% endfor %}</div></td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  </div>
+</div>
+
+<div class="content-block">
+  <h2>Reverse relations</h2>
+  <div class="status-list mt-3">
+  {% for r in info.reverse_relations %}
+    <div class="status-row">
+      <span><span class="font-monospace">{{ r.accessor }}</span> from
+        {% if r.browsable %}<a class="text-link" href="{% url 'dataviewer:model_detail' r.from %}">{{ r.from }}</a>{% else %}{{ r.from }}{% endif %}</span>
+      <span class="status-label">via {{ r.via }}</span>
+    </div>
+  {% empty %}<p class="muted-copy pt-3 mb-0">None</p>{% endfor %}
+  </div>
+</div>
+
+<div class="content-block">
+  <h2>Indexes and constraints</h2>
+  <div class="status-list mt-3">
+  {% for i in info.indexes %}<div class="status-row"><span>Index <code>{{ i.name }}</code></span><span class="meta-line">{{ i.fields|join:", " }}</span></div>{% endfor %}
+  {% for c in info.constraints %}<div class="status-row"><span><code>{{ c.name }}</code></span><span class="status-label">{{ c.type }}</span></div>{% endfor %}
+  {% for u in info.unique_together %}<div class="status-row"><span>Unique together</span><span class="meta-line">{{ u|join:", " }}</span></div>{% endfor %}
+  {% if not info.indexes and not info.constraints and not info.unique_together %}<p class="muted-copy pt-3 mb-0">None besides the primary key and foreign key indexes.</p>{% endif %}
+  </div>
+</div>
+{% endblock %}

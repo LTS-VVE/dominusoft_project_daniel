@@ -24,12 +24,14 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+
     "accounts",
     "tickets",
     "pages",
     "events",
     "knowledge",
     "resources",
+    "dataviewer",
 ]
 
 AUTH_USER_MODEL = "accounts.user"
@@ -85,7 +87,10 @@ AUTH_PASSWORD_VALIDATORS = [
 LOGIN_URL = "login"
 LOGIN_REDIRECT_URL = "tickets:ticket_list"
 LOGOUT_REDIRECT_URL = "login"
-MESSAGE_TAGS = {msg.ERROR: "danger"}
+
+MESSAGE_TAGS = {
+    msg.ERROR: "danger",
+}
 
 LANGUAGE_CODE = "en-us"
 TIME_ZONE = "Europe/Tirane"
@@ -94,10 +99,12 @@ USE_TZ = True
 
 STATIC_URL = "static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
+
 MEDIA_URL = "media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 if not DEBUG:

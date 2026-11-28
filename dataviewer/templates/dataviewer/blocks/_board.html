@@ -1,0 +1,19 @@
+<div class="d-flex gap-3 overflow-auto pb-2">
+  {% for title, items in columns.items %}
+  <div class="flex-shrink-0" style="width:260px">
+    <div class="d-flex justify-content-between align-items-center mb-2 pb-2" style="border-bottom:1px solid var(--glass-border)">
+      <span class="note-label mb-0">{{ title }}</span>
+      <span class="status-label">{{ items|length }}</span>
+    </div>
+    <div style="max-height:520px;overflow-y:auto">
+    {% for row in items %}
+    <a class="card mb-2 text-decoration-none" style="height:auto" href="{% url 'dataviewer:record_detail' source.key row.pk %}">
+      <div class="card-body py-2 px-3 small">
+        {% for cell in row.cells %}{% if forloop.counter == 2 %}<div class="fw-semibold">{{ cell.value }}</div>{% elif not forloop.first %}<div class="meta-line">{{ cell.value }}</div>{% endif %}{% endfor %}
+      </div>
+    </a>
+    {% empty %}<div class="meta-line">Empty</div>{% endfor %}
+    </div>
+  </div>
+  {% endfor %}
+</div>

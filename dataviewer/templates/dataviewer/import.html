@@ -1,0 +1,15 @@
+{% extends "dataviewer/base.html" %}
+{% block dv_title %}Import block{% endblock %}
+{% block dv_content %}
+<div class="section-heading">
+  <p class="card-kicker">{{ workspace.name }}</p>
+  <h1 class="section-title">Import a block</h1>
+</div>
+<form method="post" enctype="multipart/form-data" class="site-form col-lg-6">{% csrf_token %}
+  <label class="form-label" for="id_file">JSON file</label>
+  <input id="id_file" class="form-control" type="file" name="file" accept="application/json,.json" required>
+  {% if form.file.errors %}<div class="field-error">{{ form.file.errors|join:" " }}</div>{% endif %}
+  <div class="field-help">{{ form.file.help_text }}</div>
+  <div class="mt-4"><button class="btn btn-primary">Import</button></div>
+</form>
+{% endblock %}

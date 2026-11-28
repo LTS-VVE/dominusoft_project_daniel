@@ -1,0 +1,82 @@
+{% extends "dataviewer/base.html" %}
+{% block dv_title %}{{ workspace.name }}{% endblock %}
+{% block dv_content %}
+<div class="dv-head">
+  <div class="me-auto">
+    <p class="card-kicker mb-1">Workspace</p>
+    <h1 class="section-title mb-0">{{ workspace.name }}</h1>
+  </div>
+  <div class="dv-actions">
+    <a class="btn btn-sm btn-primary" href="{% url 'dataviewer:block_create' workspace.pk %}">New block</a>
+    <a class="btn btn-sm btn-outline-secondary" href="{% url 'dataviewer:import_config' workspace.pk %}">Import JSON</a>
+    {% if templates %}
+    <div class="dropdown">
+      <button class="btn btn-sm btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown">From template</button>
+      <ul class="dropdown-menu dropdown-menu-end">
+        {% for t in templates %}
+        <li><form method="post" action="{% url 'dataviewer:block_from_template' workspace.pk t.pk %}">{% csrf_token %}
+          <button class="dropdown-item">{{ t.name }}<br><small class="meta-line">{{ t.description }}</small></button></form></li>
+        {% endfor %}
+      </ul>
+    </div>
+    {% endif %}
+  </div>
+</div>
+
+<div class="row g-3" id="blocks" data-layout-url="{% url 'dataviewer:workspace_layout' workspace.pk %}">
+  {% for item in blocks %}
+  <div class="col-12 col-lg-{{ item.block.width }}" data-id="{{ item.block.pk }}">
+    <div class="card h-100">
+      <div class="card-header d-flex align-items-center gap-2">
+        <span class="drag-handle muted-copy" title="Drag to move" style="cursor:grab">&#x2630;</span>
+        <a class="plain-link fw-semibold me-auto" href="{% url 'dataviewer:block_detail' item.block.pk %}">{{ item.block.name }}</a>
+        <select class="form-select form-select-sm w-auto block-width" aria-label="Width">
+          {% for value, label in widths %}<option value="{{ value }}" {% if value == item.block.width %}selected{% endif %}>{{ label }}</option>{% endfor %}
+        </select>
+      </div>
+      <div class="card-body">
+        {% if item.error %}<div class="alert alert-warning mb-0">{{ item.error }}</div>
+        {% else %}{% include "dataviewer/blocks/_block.html" with source=item.source cfg=item.cfg rows=item.rows page=item.page columns=item.columns chart=item.chart chart_id=item.block.pk interactive=False %}{% endif %}
+      </div>
+    </div>
+  </div>
+  {% empty %}
+  <p class="muted-copy">No blocks yet. Create one or start from a template.</p>
+  {% endfor %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+{% include "dataviewer/blocks/_chart_js.html" %}
+<script>
+(function () {
+  const grid = document.getElementById("blocks");
+  if (!grid) return;
+  const csrf = document.cookie.split("; ").find(c => c.startsWith("csrftoken="))?.split("=")[1];
+
+  function save(payload) {
+    return fetch(grid.dataset.layoutUrl, {
+      method: "POST",
+      headers: {"Content-Type": "application/json", "X-CSRFToken": csrf},
+      body: JSON.stringify(payload),
+    });
+  }
+
+  new Sortable(grid, {
+    handle: ".drag-handle",
+    animation: 150,
+    onEnd: () => save({order: [...grid.children].map(el => el.dataset.id).filter(Boolean)}),
+  });
+
+  grid.querySelectorAll(".block-width").forEach(select => {
+    select.addEventListener("change", () => {
+      const col = select.closest("[data-id]");
+      col.className = col.className.replace(/col-lg-\d+/, "col-lg-" + select.value);
+      save({widths: {[col.dataset.id]: select.value}});
+    });
+  });
+})();
+</script>
+{% endblock %}

@@ -1,0 +1,14 @@
+<div class="cards-grid" style="grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:1rem">
+  {% for row in rows %}
+  <a class="card text-decoration-none" href="{% url 'dataviewer:record_detail' source.key row.pk %}">
+    <div class="card-body">
+      {% for cell in row.cells %}
+        {% if forloop.first %}<p class="card-kicker">#{{ cell.value }}</p>
+        {% elif forloop.counter == 2 %}<h3 class="card-title">{{ cell.value }}</h3>
+        {% else %}<div class="meta-line">{{ cell.value|truncatechars:60 }}</div>{% endif %}
+      {% endfor %}
+    </div>
+  </a>
+  {% empty %}<p class="muted-copy">No records.</p>{% endfor %}
+</div>
+{% if interactive %}{% include "dataviewer/blocks/_pagination.html" %}{% endif %}

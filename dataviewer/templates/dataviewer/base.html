@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}{% block dv_title %}Data Viewer{% endblock %} | KOD{% endblock %}
+{% block content %}
+<style>
+  .dv-section { padding: 2.5rem 0 4rem; }
+  .dv-nav { margin-bottom: 2.5rem; padding-bottom: 1.25rem; border-bottom: 1px solid var(--glass-border); align-items: center; }
+  .dv-brand { margin-right: 1rem; font-family: var(--mono); font-weight: 700; letter-spacing: .14em; color: var(--text); text-decoration: none; }
+  .dv-brand::after { content: ""; display: inline-block; width: .5em; height: .5em; margin-left: .45em; background: var(--accent); }
+  .dv-head { display: flex; flex-wrap: wrap; align-items: flex-end; gap: .75rem; margin-bottom: 1.75rem; }
+  .dv-head .section-title { margin: 0 auto 0 0; }
+  .dv-head .section-title::after { display: none; }
+  .dv-actions { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; }
+  .dv-actions form { margin: 0; }
+  .dv-count { font-family: var(--mono); font-size: .8rem; letter-spacing: .14em; color: var(--muted); text-transform: uppercase; }
+  .dv-key { font-family: var(--mono); font-size: .8rem; color: var(--muted); }
+  .dv-back { display: inline-block; margin-bottom: .75rem; font-family: var(--mono); font-size: .8rem; letter-spacing: .14em; text-transform: uppercase; }
+</style>
+{% with page=request.resolver_match.url_name %}
+<section class="dv-section">
+<div class="container">
+  <nav class="chips dv-nav" aria-label="Data viewer">
+    <a class="dv-brand" href="{% url 'dataviewer:home' %}">/DATA</a>
+    <a class="chip {% if page == 'home' or page == 'workspace' or 'block' in page or 'view' in page %}active{% endif %}" href="{% url 'dataviewer:home' %}">Workspace</a>
+    <a class="chip {% if page == 'explorer' or page == 'records' or page == 'record_detail' or page == 'model_detail' %}active{% endif %}" href="{% url 'dataviewer:explorer' %}">Model Explorer</a>
+    {% if request.user.is_staff %}
+    <a class="chip {% if page == 'snapshots' %}active{% endif %}" href="{% url 'dataviewer:snapshots' %}">Schema</a>
+    {% endif %}
+  </nav>
+  {% for message in messages %}
+  <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible fade show">
+    {{ message }}<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+  {% endfor %}
+  {% block dv_content %}{% endblock %}
+</div>
+</section>
+{% endwith %}
+<script>
+  // Press "/" anywhere to jump to the search box.
+  document.addEventListener("keydown", e => {
+    const box = document.querySelector('input[type="search"]');
+    const t = document.activeElement;
+    if (e.key === "/" && box && t !== box && !/^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName)) { e.preventDefault(); box.focus(); }
+  });
+</script>
+{% endblock %}

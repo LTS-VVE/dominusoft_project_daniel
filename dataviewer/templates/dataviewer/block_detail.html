@@ -1,0 +1,51 @@
+{% extends "dataviewer/base.html" %}
+{% load dataviewer_tags %}
+{% block dv_title %}{{ data_block.name }}{% endblock %}
+{% block dv_content %}
+<a class="dv-back plain-link" href="{% url 'dataviewer:workspace' data_block.workspace_id %}">&larr; {{ data_block.workspace.name }}</a>
+<div class="dv-head">
+  <div class="me-auto">
+    <p class="dv-count mb-1">{{ total }} found{% if active_view %} &middot; view: {{ active_view.name }}{% endif %}</p>
+    <h1 class="section-title mb-0">{{ data_block.name }}</h1>
+  </div>
+  <div class="dv-actions">
+    <a class="btn btn-sm btn-primary" href="{% url 'dataviewer:block_edit' data_block.pk %}">Configure</a>
+    {% include "dataviewer/blocks/_export_menu.html" %}
+    <form method="post" action="{% url 'dataviewer:block_duplicate' data_block.pk %}">{% csrf_token %}<button class="btn btn-sm btn-outline-secondary">Duplicate</button></form>
+    <form method="post" action="{% url 'dataviewer:block_delete' data_block.pk %}" onsubmit="return confirm('Delete this block?')">{% csrf_token %}<button class="btn btn-sm btn-outline-secondary">Delete</button></form>
+  </div>
+</div>
+
+<div class="chips mb-3">
+  <a class="chip {% if not active_view %}active{% endif %}" href="{% url 'dataviewer:block_detail' data_block.pk %}">Default</a>
+  {% for v in views %}
+  <span class="d-inline-flex">
+    <a class="chip {% if active_view.pk == v.pk %}active{% endif %}" href="?view={{ v.pk }}">{{ v.name }}</a>
+    <form method="post" action="{% url 'dataviewer:view_delete' v.pk %}" class="m-0">{% csrf_token %}<button class="chip" title="Delete view" aria-label="Delete view {{ v.name }}" style="border-left:0">&times;</button></form>
+  </span>
+  {% endfor %}
+  <button type="button" class="chip" data-bs-toggle="collapse" data-bs-target="#save-view">+ Save current view</button>
+</div>
+
+<form id="save-view" class="site-form collapse card card-body mb-4" method="post" action="{% url 'dataviewer:view_save' data_block.pk %}">{% csrf_token %}
+  <input type="hidden" name="sort" value="{{ request.GET.sort }}">
+  <input type="hidden" name="q" value="{{ search }}">
+  <div class="row g-3 align-items-end">
+    <div class="col-md-4"><label class="form-label">View name</label>{{ view_form.name }}</div>
+    <div class="col-md-6"><span class="note-label">Hide columns</span>
+      <div class="chips">{% for f in cfg.fields %}
+        <div class="form-check"><input class="form-check-input" type="checkbox" name="hide" value="{{ f }}" id="hide-{{ f }}">
+        <label class="form-check-label font-monospace small" for="hide-{{ f }}">{{ f }}</label></div>{% endfor %}</div></div>
+    <div class="col-md-2"><button class="btn btn-primary w-100">Save</button></div>
+  </div>
+  <div class="field-help">Saves the current search and sort too.</div>
+</form>
+
+{% include "dataviewer/blocks/_search.html" %}
+{% include "dataviewer/blocks/_block.html" with interactive=True chart_id="main" %}
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+{% include "dataviewer/blocks/_chart_js.html" %}
+{% endblock %}

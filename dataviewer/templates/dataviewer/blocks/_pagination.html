@@ -1,0 +1,8 @@
+{% load dataviewer_tags %}
+{% if page.paginator.num_pages > 1 %}
+<nav class="pager" aria-label="Pagination">
+  {% if page.has_previous %}<a class="btn btn-sm btn-outline-secondary" href="{% url_with page=page.previous_page_number %}">&larr; Previous</a>{% else %}<span></span>{% endif %}
+  <span class="dv-count">Page {{ page.number }} / {{ page.paginator.num_pages }}</span>
+  {% if page.has_next %}<a class="btn btn-sm btn-outline-secondary" href="{% url_with page=page.next_page_number %}">Next &rarr;</a>{% else %}<span></span>{% endif %}
+</nav>
+{% endif %}

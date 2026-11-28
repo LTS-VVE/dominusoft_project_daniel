@@ -1,0 +1,27 @@
+<script>
+(function () {
+  const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+  const accent = css("--accent") || "#ff8205";
+  const muted = css("--muted") || "#bfae94";
+  const grid = css("--glass-border") || "rgba(255,200,130,.16)";
+  const mono = css("--mono") || "monospace";
+  Chart.defaults.color = muted;
+  Chart.defaults.font.family = mono;
+
+  document.querySelectorAll(".dv-chart-wrap").forEach(wrap => {
+    const data = JSON.parse(wrap.querySelector('script[type="application/json"]').textContent);
+    new Chart(wrap.querySelector("canvas"), {
+      type: "bar",
+      data: {labels: data.labels, datasets: [{label: "Records", data: data.data, backgroundColor: accent, borderRadius: 0, maxBarThickness: 48}]},
+      options: {
+        maintainAspectRatio: false,
+        plugins: {legend: {display: false}},
+        scales: {
+          x: {grid: {display: false}, border: {color: grid}},
+          y: {beginAtZero: true, ticks: {precision: 0}, grid: {color: grid}, border: {display: false}},
+        },
+      },
+    });
+  });
+})();
+</script>

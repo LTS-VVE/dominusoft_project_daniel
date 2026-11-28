@@ -1,0 +1,34 @@
+{% extends "dataviewer/base.html" %}
+{% block dv_title %}{{ obj }}{% endblock %}
+{% block dv_content %}
+<a class="dv-back plain-link" href="{% url 'dataviewer:records' source.key %}">&larr; {{ source.label }}</a>
+<div class="section-heading"><h1 class="section-title">{{ obj }}</h1></div>
+<div class="row g-4">
+  <div class="col-lg-5">
+    <div class="values-grid mt-0" style="grid-template-columns:1fr">
+    {% for name, cell in fields %}
+      <div class="value-item">
+        <span class="note-label">{{ name }}</span>
+        <h3>{% if cell.link %}<a class="text-link" href="{% url 'dataviewer:record_detail' cell.link.0 cell.link.1 %}">{{ cell.value }}</a>{% else %}{{ cell.value }}{% endif %}</h3>
+      </div>
+    {% endfor %}
+    </div>
+  </div>
+  <div class="col-lg-7">
+    {% for rel in related %}
+    <div class="card mb-3">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <span class="fw-semibold">{{ rel.source.label }}</span>
+        <span class="status-label">via {{ rel.via }} &middot; {{ rel.total }}</span>
+      </div>
+      <ul class="list-group list-group-flush">
+        {% for item in rel.items %}
+        <li class="list-group-item"><a class="plain-link" href="{% url 'dataviewer:record_detail' rel.source.key item.pk %}">{{ item }}</a></li>
+        {% empty %}<li class="list-group-item muted-copy">None</li>{% endfor %}
+        {% if rel.total > 20 %}<li class="list-group-item meta-line">Showing 20 of {{ rel.total }}</li>{% endif %}
+      </ul>
+    </div>
+    {% empty %}<p class="muted-copy">No related records you can see.</p>{% endfor %}
+  </div>
+</div>
+{% endblock %}

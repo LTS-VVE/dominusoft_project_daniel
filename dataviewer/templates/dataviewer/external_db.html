@@ -1,0 +1,19 @@
+{% extends "dataviewer/base.html" %}
+{% block dv_title %}External: {{ alias }}{% endblock %}
+{% block dv_content %}
+<div class="section-heading">
+  <p class="card-kicker">External database</p>
+  <h1 class="section-title">{{ alias }}</h1>
+</div>
+<div class="status-list">
+{% for t in tables %}
+  <details class="status-row d-block">
+    <summary class="d-flex justify-content-between gap-3" style="cursor:pointer">
+      <span class="font-monospace">{{ t.name }}</span>
+      <span class="status-label">{{ t.type }} &middot; {{ t.columns|length }} columns</span>
+    </summary>
+    <div class="tag-list mt-3">{% for c in t.columns %}<span class="tag font-monospace">{{ c.name }}{% if c.null %} &middot; null{% endif %}</span>{% endfor %}</div>
+  </details>
+{% empty %}<p class="muted-copy pt-3">No tables.</p>{% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,31 @@
+{% load dataviewer_tags %}
+<div class="table-responsive">
+<table class="table table-sm table-hover align-middle mb-2">
+  <thead><tr>
+    {% for f in cfg.fields %}
+    <th class="font-monospace small text-uppercase" style="letter-spacing:.08em;{% for name, px in cfg.column_widths.items %}{% if name == f %}width:{{ px }}px{% endif %}{% endfor %}">
+      {% if interactive %}<a class="plain-link" href="{% url_with sort=sort|sort_toggle:f page=None %}">{{ f }}{% if sort == f %} <span style="color:var(--accent-text)">&uarr;</span>{% elif sort|slice:"1:" == f and sort|first == "-" %} <span style="color:var(--accent-text)">&darr;</span>{% endif %}</a>
+      {% else %}{{ f }}{% endif %}
+    </th>
+    {% endfor %}
+  </tr></thead>
+  <tbody>
+  {% for row in rows %}
+    <tr>
+      {% for cell in row.cells %}
+      <td>
+        {% if forloop.first %}<a class="text-link" href="{% url 'dataviewer:record_detail' source.key row.pk %}">{{ cell.value }}</a>
+        {% elif cell.link %}<a class="text-link" href="{% url 'dataviewer:record_detail' cell.link.0 cell.link.1 %}">{{ cell.value }}</a>
+        {% elif cell.value is True %}<span class="status-label status-open">yes</span>
+        {% elif cell.value is False %}<span class="status-label status-closed">no</span>
+        {% else %}{{ cell.value|truncatechars:80 }}{% endif %}
+      </td>
+      {% endfor %}
+    </tr>
+  {% empty %}
+    <tr><td colspan="{{ cfg.fields|length }}" class="muted-copy">No records.</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+</div>
+{% if interactive %}{% include "dataviewer/blocks/_pagination.html" %}{% endif %}

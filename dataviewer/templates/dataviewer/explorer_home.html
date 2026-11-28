@@ -1,0 +1,25 @@
+{% extends "dataviewer/base.html" %}
+{% block dv_title %}Model Explorer{% endblock %}
+{% block dv_content %}
+<div class="section-heading">
+  <p class="card-kicker">Data sources</p>
+  <h1 class="section-title">Model Explorer</h1>
+</div>
+<div class="cards-grid">
+  {% for item in sources %}
+  <article class="card">
+    <div class="card-body">
+      <p class="card-kicker">{{ item.source.key }}</p>
+      <h2 class="card-title">{{ item.source.label }}</h2>
+      <p class="card-text">{{ item.count }} record{{ item.count|pluralize }} &middot; {{ item.source.fields|length }} fields</p>
+      <div class="d-flex gap-2 mt-auto">
+        <a class="btn btn-sm btn-primary" href="{% url 'dataviewer:records' item.source.key %}">Browse</a>
+        <a class="btn btn-sm btn-outline-secondary" href="{% url 'dataviewer:model_detail' item.source.key %}">Structure</a>
+      </div>
+    </div>
+  </article>
+  {% empty %}
+  <p class="muted-copy">No data sources you can see. Ask an admin for view permissions.</p>
+  {% endfor %}
+</div>
+{% endblock %}

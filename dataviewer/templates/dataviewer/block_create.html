@@ -1,0 +1,18 @@
+{% extends "dataviewer/base.html" %}
+{% block dv_title %}New block{% endblock %}
+{% block dv_content %}
+<div class="section-heading">
+  <p class="card-kicker">{{ workspace.name }}</p>
+  <h1 class="section-title">New block</h1>
+</div>
+<form method="post" class="site-form col-lg-6">{% csrf_token %}
+  <label class="form-label" for="id_name">Name</label>
+  <input class="form-control" name="name" id="id_name" required value="{{ form.name.value|default:'' }}">
+  <label class="form-label" for="id_source">Data source</label>
+  <select class="form-select" name="source" id="id_source">
+    {% for value, label in form.fields.source.choices %}<option value="{{ value }}">{{ label }}</option>{% endfor %}
+  </select>
+  {% if form.non_field_errors %}<div class="field-error">{{ form.non_field_errors|join:" " }}</div>{% endif %}
+  <div class="mt-4"><button class="btn btn-primary">Next: configure</button></div>
+</form>
+{% endblock %}

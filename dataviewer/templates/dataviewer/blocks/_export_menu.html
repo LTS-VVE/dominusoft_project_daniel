@@ -1,0 +1,11 @@
+{% load dataviewer_tags %}
+<div class="dropdown">
+  <button class="btn btn-sm btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown">Export</button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><a class="dropdown-item" href="{% url 'dataviewer:export_config' data_block.pk %}">Config JSON</a></li>
+    <li><a class="dropdown-item" href="{% url 'dataviewer:export_data' data_block.pk 'csv' %}{% url_with page=None view=None %}">Data CSV</a></li>
+    <li><a class="dropdown-item" href="{% url 'dataviewer:export_data' data_block.pk 'json' %}{% url_with page=None view=None %}">Data JSON</a></li>
+    <li><a class="dropdown-item" href="{% url 'dataviewer:export_code' data_block.pk %}">Django code (ZIP)</a></li>
+    <li><a class="dropdown-item" href="{% url 'dataviewer:api_block_data' data_block.pk %}">API endpoint</a></li>
+  </ul>
+</div>

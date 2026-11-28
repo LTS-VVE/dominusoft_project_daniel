@@ -1,0 +1,36 @@
+{% extends "dataviewer/base.html" %}
+{% block dv_title %}Schema snapshots{% endblock %}
+{% block dv_content %}
+<div class="section-heading">
+  <p class="card-kicker">Staff</p>
+  <h1 class="section-title">Schema snapshots</h1>
+</div>
+
+<form method="post" class="site-form mb-5 col-lg-6">{% csrf_token %}
+  <label class="form-label" for="snap-label">New snapshot</label>
+  <div class="d-flex gap-2">
+    <input id="snap-label" class="form-control" name="label" placeholder="Label, e.g. before adding priority">
+    <button class="btn btn-primary text-nowrap">Take snapshot</button>
+  </div>
+</form>
+
+<form method="get" class="site-form row g-3 align-items-end mb-4">
+  <div class="col-md-4"><label class="form-label">Old</label><select name="a" class="form-select">{% for s in snapshots %}<option value="{{ s.pk }}" {% if request.GET.a == s.pk|stringformat:"s" %}selected{% endif %}>#{{ s.pk }} {{ s }}</option>{% endfor %}</select></div>
+  <div class="col-md-4"><label class="form-label">New</label><select name="b" class="form-select">{% for s in snapshots %}<option value="{{ s.pk }}" {% if request.GET.b == s.pk|stringformat:"s" %}selected{% endif %}>#{{ s.pk }} {{ s }}</option>{% endfor %}</select></div>
+  <div class="col-md-4"><button class="btn btn-outline-secondary">Compare</button></div>
+</form>
+
+{% if diff %}
+<div class="content-block font-monospace">
+  {% if not diff.models_added and not diff.models_removed and not diff.models_changed %}<p class="mb-0">No differences.</p>{% endif %}
+  {% for m in diff.models_added %}<p style="color:#4ade80" class="mb-1">+ model {{ m }}</p>{% endfor %}
+  {% for m in diff.models_removed %}<p style="color:#ff6b5e" class="mb-1">&minus; model {{ m }}</p>{% endfor %}
+  {% for model, c in diff.models_changed.items %}
+    <h3 class="note-label mt-4">{{ model }}</h3>
+    {% for f in c.added %}<div style="color:#4ade80">+ {{ f }}</div>{% endfor %}
+    {% for f in c.removed %}<div style="color:#ff6b5e">&minus; {{ f }}</div>{% endfor %}
+    {% for f in c.modified %}<div style="color:#ffc233">~ {{ f.field }}: {% for k, v in f.changes.items %}{{ k }} {{ v.0 }} &rarr; {{ v.1 }}; {% endfor %}</div>{% endfor %}
+  {% endfor %}
+</div>
+{% endif %}
+{% endblock %}
