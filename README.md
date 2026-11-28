@@ -109,7 +109,8 @@ Switching databases doesn't move your data. Use `dumpdata` / `loaddata` if you n
  
 ## Useful commands
  
-```bash
+
+```Bash
 python manage.py makemigrations
 python manage.py migrate
 python manage.py showmigrations
